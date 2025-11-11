@@ -3,15 +3,14 @@ package cmd
 import (
 	"fmt"
 	"net/http"
+
+	"github.com/rzhbadhon/urlshortener/rest/handlers"
 )
 
 func Server() {
 	mux := http.NewServeMux()
 
-	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprintln(w, "Server running")
-	},
-	)
+	mux.HandleFunc("/", http.HandlerFunc(handlers.ShortUrl))
 
 	err := http.ListenAndServe(":5000", mux)
 

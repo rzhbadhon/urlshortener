@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"time"
 
 	"github.com/rzhbadhon/urlshortener/models"
 	"github.com/rzhbadhon/urlshortener/utils"
@@ -28,7 +29,13 @@ func ShortUrl(w http.ResponseWriter, r *http.Request){
 		fmt.Println("Error shortning the url", http.StatusInternalServerError)
 		return
 	}
-	
 
+	var sendUrl models.ShortUrl
+	sendUrl.ShortUrl = shortUrl
+	expireAt := time.Now().Add(time.Hour*2)
+	sendUrl.ExpireAt = expireAt.Format("2006-01-02 15:04:05")
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(sendUrl)
 		
 }
