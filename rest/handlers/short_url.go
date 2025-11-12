@@ -6,11 +6,21 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/jmoiron/sqlx"
 	"github.com/rzhbadhon/urlshortener/models"
 	"github.com/rzhbadhon/urlshortener/utils"
 )
+type Handler struct{
+	Db *sqlx.DB
+}
 
-func ShortUrl(w http.ResponseWriter, r *http.Request){
+func NewHandler(db *sqlx.DB) Handler{
+	return Handler{
+		Db: db,
+	}
+}
+
+func (h *Handler) ShortUrl(w http.ResponseWriter, r *http.Request){
 	if r.Method != http.MethodPost{
 		http.Error(w, "Only POST method allowed", http.StatusMethodNotAllowed)
 		return
@@ -34,6 +44,8 @@ func ShortUrl(w http.ResponseWriter, r *http.Request){
 	sendUrl.ShortUrl = shortUrl
 	expireAt := time.Now().Add(time.Hour*2)
 	sendUrl.ExpireAt = expireAt.Format("2006-01-02 15:04:05")
+
+	
 
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(sendUrl)
