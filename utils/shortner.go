@@ -1,13 +1,15 @@
 package utils
 
-func Shortner(reqUrl string) (string, error) {
+const alphabet = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
 
-	num := 1234567890
+func Shortner(num int) string {
+	if num == 0{
+		return string(alphabet[0])
+	}
 	result := ""
 	for num > 0 {
-		result = string(reqUrl[num%62]) + result
-		num /= 62
+		result = string(alphabet[num%62]) + result
+		num = num/62
 	}
-
-	return result, nil
+	return result
 }

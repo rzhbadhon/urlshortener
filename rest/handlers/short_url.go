@@ -14,8 +14,8 @@ type Handler struct{
 	Db *sqlx.DB
 }
 
-func NewHandler(db *sqlx.DB) Handler{
-	return Handler{
+func NewHandler(db *sqlx.DB) *Handler{
+	return &Handler{
 		Db: db,
 	}
 }
@@ -34,18 +34,27 @@ func (h *Handler) ShortUrl(w http.ResponseWriter, r *http.Request){
 		return
 	}
 
-	shortUrl, err := utils.Shortner(reqUrl.URL)
+	var id int
+	expireAt := time.Now().Add(48 * time.Hour)
+	err = h.Db.QueryRow("INSERT INTO urls (original_url, expire_at) VALUES ($1, $2) RETURNING id", reqUrl.URL, expireAt).Scan(&id)
 	if err != nil{
-		fmt.Println("Error shortning the url", http.StatusInternalServerError)
+		 fmt.Println("DB insert error:", err)
+		http.Error(w, "Failed to insert url into db", http.StatusInternalServerError)
 		return
 	}
 
+	shortCode := utils.Shortner(id)
+	_, err = h.Db.Exec("UPDATE urls SET short_code=$1 WHERE id=$2", shortCode, id)
+	if err != nil {
+            http.Error(w, "Failed to update short code", http.StatusInternalServerError)
+            return
+        }
+
 	var sendUrl models.ShortUrl
-	sendUrl.ShortUrl = shortUrl
-	expireAt := time.Now().Add(time.Hour*2)
+	sendUrl.ShortUrl = shortCode
 	sendUrl.ExpireAt = expireAt.Format("2006-01-02 15:04:05")
 
-	
+
 
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(sendUrl)

@@ -4,14 +4,14 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-
+	_ "github.com/lib/pq" 
 	"github.com/jmoiron/sqlx"
 	"github.com/rzhbadhon/urlshortener/rest/handlers"
 )
 
 func Server() {
 	//"user=postgres password=1212 dbname=authentication sslmode=disable"
-	connStr := "user=postgres password=1212 dbname=authentication sslmode=disable"
+	connStr := "user=postgres password=1212 dbname=urlshortner sslmode=disable"
 	if connStr == "" {
 		log.Fatal("DB_URL isnt set")
 	}
@@ -21,11 +21,13 @@ func Server() {
 		log.Fatal("failed to connect to database: ", err)
 	}
 
+	h := handlers.NewHandler(db)
+
 	log.Println("Database connected succssfully")
 
 	mux := http.NewServeMux()
 
-	mux.HandleFunc("/", http.HandlerFunc(handlers.ShortUrl))
+	mux.HandleFunc("/", http.HandlerFunc(h.ShortUrl))
 
 	err = http.ListenAndServe(":5000", mux)
 
