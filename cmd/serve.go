@@ -27,7 +27,8 @@ func Server() {
 
 	mux := http.NewServeMux()
 
-	mux.HandleFunc("/", http.HandlerFunc(h.ShortUrl))
+	mux.HandleFunc("/", http.HandlerFunc(h.RedirectURL))
+	mux.HandleFunc("/shorten", http.HandlerFunc(h.ShortUrl))
 
 	err = http.ListenAndServe(":5000", mux)
 
