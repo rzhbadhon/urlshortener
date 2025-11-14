@@ -45,11 +45,14 @@ The service demonstrates:
 Clone the repository:
 
 ```bash
-git clone https://github.com/yourusername/urlshortener.git
+git clone https://github.com/rzhbadhon/urlshortener.git
 cd urlshortener
 
 urlshortener/
-├── handlers/       # HTTP handlers
-├── models/         # Request/response models
-├── utils/          # Utility functions (Shortner)
-├── main.go         # Entry point
+├── handlers/         # HTTP handlers
+├── models/           # Request/response models
+├── rest/handlers/    # URL Handler
+├── rest/middlewares/ # CORS Handler
+├── docs/             # HTML Frontend
+├── utils/            # Utility function(Shortner)
+├── main.go           # Entry point
