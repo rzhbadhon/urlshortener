@@ -4,9 +4,11 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	_ "github.com/lib/pq" 
+
 	"github.com/jmoiron/sqlx"
+	_ "github.com/lib/pq"
 	"github.com/rzhbadhon/urlshortener/rest/handlers"
+	"github.com/rzhbadhon/urlshortener/rest/middlewares"
 )
 
 func Server() {
@@ -30,7 +32,9 @@ func Server() {
 	mux.HandleFunc("/", http.HandlerFunc(h.RedirectURL))
 	mux.HandleFunc("/shorten", http.HandlerFunc(h.ShortUrl))
 
-	err = http.ListenAndServe(":5000", mux)
+	handlerMux := middlewares.CorsHandler(mux)
+
+	err = http.ListenAndServe(":5000", handlerMux)
 
 	if err != nil {
 		fmt.Println("Error starting the server", err)

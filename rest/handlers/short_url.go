@@ -55,7 +55,7 @@ func (h *Handler) ShortUrl(w http.ResponseWriter, r *http.Request){
 	sendUrl.ExpireAt = expireAt.Format("2006-01-02 15:04:05")
 
 
-
+	w.WriteHeader(http.StatusOK)
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(sendUrl)
 		

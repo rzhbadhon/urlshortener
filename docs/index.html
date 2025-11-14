@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>URL Shortener — ecoScanAi</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    :root {
+      --bg: #0f172a;
+      --panel: #111827;
+      --accent: #22d3ee;
+      --text: #e5e7eb;
+      --muted: #9ca3af;
+      --error: #ef4444;
+      --success: #10b981;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Segoe UI Symbol", sans-serif;
+      background: radial-gradient(1200px 600px at 20% 0%, #0b1024 10%, var(--bg) 60%);
+      color: var(--text);
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      padding: 24px;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 680px;
+      background: linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.02));
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 16px;
+      box-shadow: 0 30px 80px rgba(0,0,0,0.4);
+      overflow: hidden;
+    }
+
+    .header {
+      padding: 28px 28px 16px;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .logo {
+      width: 44px;
+      height: 44px;
+      border-radius: 8px;
+      background: conic-gradient(from 200deg, #22d3ee, #10b981, #818cf8, #22d3ee);
+      box-shadow: 0 0 0 2px rgba(34, 211, 238, 0.3);
+    }
+
+    .title {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .title h1 {
+      font-size: 20px;
+      margin: 0;
+      letter-spacing: 0.2px;
+    }
+    .title p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .content {
+      padding: 26px 28px 30px;
+    }
+
+    .field {
+      display: grid;
+      gap: 10px;
+      margin-bottom: 18px;
+    }
+
+    label {
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .input {
+      display: flex;
+      gap: 10px;
+    }
+
+    input[type="url"] {
+      flex: 1;
+      padding: 14px 14px;
+      border-radius: 10px;
+      border: 1px solid rgba(255,255,255,0.12);
+      background: rgba(17, 24, 39, 0.7);
+      color: var(--text);
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+    }
+    input[type="url"]::placeholder { color: #737373; }
+    input[type="url"]:focus {
+      border-color: rgba(34, 211, 238, 0.5);
+      box-shadow: 0 0 0 3px rgba(34, 211, 238, 0.15);
+      background: rgba(17, 24, 39, 0.85);
+    }
+
+    button {
+      padding: 14px 18px;
+      border-radius: 10px;
+      border: none;
+      background: linear-gradient(90deg, #22d3ee, #818cf8);
+      color: #0b1024;
+      font-weight: 700;
+      letter-spacing: 0.2px;
+      cursor: pointer;
+      transition: transform 0.06s ease, filter 0.2s ease;
+      min-width: 120px;
+    }
+    button:hover { filter: brightness(1.05); }
+    button:active { transform: translateY(1px); }
+
+    .result {
+      margin-top: 16px;
+      display: none;
+      border: 1px solid rgba(34, 211, 238, 0.25);
+      border-radius: 12px;
+      padding: 14px;
+      background: rgba(2, 6, 23, 0.5);
+    }
+
+    .row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .short-url {
+      flex: 1;
+      padding: 12px 12px;
+      border-radius: 8px;
+      background: rgba(17, 24, 39, 0.7);
+      border: 1px dashed rgba(34, 211, 238, 0.35);
+      font-weight: 600;
+    }
+
+    .meta {
+      margin-top: 10px;
+      display: flex;
+      gap: 16px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .status {
+      margin-top: 10px;
+      font-size: 13px;
+      padding: 10px 12px;
+      border-radius: 8px;
+      display: none;
+    }
+    .status.error {
+      display: block;
+      background: rgba(239, 68, 68, 0.15);
+      border: 1px solid rgba(239, 68, 68, 0.6);
+      color: #fecaca;
+    }
+    .status.success {
+      display: block;
+      background: rgba(16, 185, 129, 0.12);
+      border: 1px solid rgba(16, 185, 129, 0.6);
+      color: #d1fae5;
+    }
+
+    .footer {
+      padding: 14px 20px;
+      border-top: 1px solid rgba(255,255,255,0.08);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .credit a {
+      color: var(--accent);
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    @media (max-width: 520px) {
+      .content { padding: 22px; }
+      .header { padding: 22px 22px 14px; }
+      button { min-width: 100px; }
+    }
+  </style>
+</head>
+<body>
+  <main class="container" role="main">
+    <header class="header">
+      <div class="logo" aria-hidden="true"></div>
+      <div class="title">
+        <h1>URL Shortener</h1>
+        <p>Paste a long URL, get a clean short link — fast and reliable.</p>
+      </div>
+    </header>
+
+    <section class="content">
+      <form id="shorten-form" aria-label="Shorten URL">
+        <div class="field">
+          <label for="url">Enter your URL</label>
+          <div class="input">
+            <input id="url" name="url" type="url" placeholder="https://example.com/some/very/long/path?with=params"
+                   required pattern="https?://.*" />
+            <button type="submit">Shorten</button>
+          </div>
+        </div>
+        <p id="status" class="status" aria-live="polite"></p>
+      </form>
+
+      <div id="result" class="result" aria-live="polite">
+        <div class="row">
+          <div id="short-url" class="short-url">localhost:5000/abc123</div>
+          <button id="copy-btn" type="button" title="Copy short URL">Copy</button>
+          <a id="open-btn" class="btn" target="_blank" rel="noopener" title="Open short URL">
+            <button type="button">Open</button>
+          </a>
+        </div>
+        <div class="meta">
+          <span id="expires">Expires: —</span>
+        </div>
+      </div>
+    </section>
+
+    <footer class="footer">
+      <div>Powered by Go + Postgres</div>
+      <div class="credit">
+        Developer: <a href="https://github.com/rzhbadhon" target="_blank" rel="noopener">Razibul Hasan Badhon</a>
+      </div>
+    </footer>
+  </main>
+
+  <script>
+    const form = document.getElementById('shorten-form');
+    const urlInput = document.getElementById('url');
+    const statusEl = document.getElementById('status');
+    const resultEl = document.getElementById('result');
+    const shortUrlEl = document.getElementById('short-url');
+    const copyBtn = document.getElementById('copy-btn');
+    const openBtn = document.getElementById('open-btn');
+    const expiresEl = document.getElementById('expires');
+
+    function showStatus(message, type = 'success') {
+      statusEl.textContent = message;
+      statusEl.className = `status ${type}`;
+    }
+
+    function clearStatus() {
+      statusEl.textContent = '';
+      statusEl.className = 'status';
+    }
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      clearStatus();
+
+      const longUrl = urlInput.value.trim();
+      if (!longUrl) {
+        showStatus('Please enter a valid URL.', 'error');
+        return;
+      }
+
+      try {
+        const res = await fetch('http://localhost:5000/shorten', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ url: longUrl })
+        });
+
+        if (!res.ok) {
+          const text = await res.text();
+          throw new Error(text || `Request failed (${res.status})`);
+        }
+
+        const data = await res.json();
+        // Expecting: { short_url: "localhost:5000/adh", expire_at: "2025-12-31T..." }
+        const shortUrl = data.short_url || '';
+        const expireAt = data.expire_at || '';
+
+        if (!shortUrl) {
+          throw new Error('No short_url returned from server.');
+        }
+
+        shortUrlEl.textContent = shortUrl;
+        openBtn.href = shortUrl.startsWith('http') ? shortUrl : `http://${shortUrl}`;
+        expiresEl.textContent = expireAt ? `Expires: ${new Date(expireAt).toLocaleString()}` : 'Expires: —';
+
+        resultEl.style.display = 'block';
+        showStatus('Short link created successfully.', 'success');
+      } catch (err) {
+        console.error(err);
+        showStatus(err.message || 'Failed to create short URL.', 'error');
+        resultEl.style.display = 'none';
+      }
+    });
+
+    copyBtn.addEventListener('click', async () => {
+      const text = shortUrlEl.textContent.trim();
+      if (!text) return;
+      try {
+        await navigator.clipboard.writeText(text);
+        showStatus('Short URL copied to clipboard.', 'success');
+      } catch {
+        showStatus('Unable to copy. Please copy manually.', 'error');
+      }
+    });
+  </script>
+</body>
+</html>
