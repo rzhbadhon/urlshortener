@@ -51,10 +51,11 @@ func (h *Handler) ShortUrl(w http.ResponseWriter, r *http.Request){
         }
 
 	var sendUrl models.ShortUrl
-	sendUrl.ShortUrl = shortCode
 	sendUrl.ExpireAt = expireAt.Format("2006-01-02 15:04:05")
-
-
+	
+	// we are sending the full shorturl to the user... not just the shortcode..
+	sendUrl.ShortUrl = "http://localhost:5000/"+ shortCode
+	
 	w.WriteHeader(http.StatusOK)
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(sendUrl)
