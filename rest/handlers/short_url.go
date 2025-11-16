@@ -34,9 +34,11 @@ func (h *Handler) ShortUrl(w http.ResponseWriter, r *http.Request){
 		return
 	}
 
+	
+
 	var id int
 	expireAt := time.Now().Add(48 * time.Hour)
-	err = h.Db.QueryRow("INSERT INTO urls (original_url, expire_at) VALUES ($1, $2) RETURNING id", reqUrl.URL, expireAt).Scan(&id)
+	err = h.Db.QueryRow("INSERT INTO urls (original_url, expire_at, text) VALUES ($1, $2, $3) RETURNING id", reqUrl.URL, expireAt, reqUrl.Texts).Scan(&id)
 	if err != nil{
 		 fmt.Println("DB insert error:", err)
 		http.Error(w, "Failed to insert url into db", http.StatusInternalServerError)
@@ -55,6 +57,7 @@ func (h *Handler) ShortUrl(w http.ResponseWriter, r *http.Request){
 	
 	// we are sending the full shorturl to the user... not just the shortcode..
 	sendUrl.ShortUrl = "http://localhost:5000/"+ shortCode
+	sendUrl.Texts = reqUrl.Texts
 	
 	w.WriteHeader(http.StatusOK)
 	w.Header().Set("Content-Type", "application/json")
