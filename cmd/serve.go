@@ -31,6 +31,7 @@ func Server() {
 
 	mux.HandleFunc("/", http.HandlerFunc(h.RedirectURL))
 	mux.HandleFunc("/shorten", http.HandlerFunc(h.ShortUrl))
+	mux.HandleFunc("/text", http.HandlerFunc(h.GetText))
 
 	handlerMux := middlewares.CorsHandler(mux)
 
