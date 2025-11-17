@@ -12,4 +12,7 @@ type ShortUrl struct{
 	ShortUrl string `json:"short_url"`
 	ExpireAt string `json:"expire_at"`
 	Texts string `json:"text"`
+	Code string `json:"code"`
+	Id int `json:"id"`
 }
+
