@@ -15,9 +15,9 @@ func (h *Handler) GetText(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var code models.ShortUrl
-
+	// decode the txt
 	json.NewDecoder(r.Body).Decode(&code)
-
+	// get the url from db
 	query := "SELECT text FROM urls WHERE id = $1"
 
 	err := h.Db.QueryRow(query, code.Id).Scan(&code.Texts)
@@ -26,6 +26,7 @@ func (h *Handler) GetText(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Failed to insert url into db", http.StatusInternalServerError)
 		return
 	}
+	// send response
 	w.WriteHeader(http.StatusOK)
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(code.Texts)

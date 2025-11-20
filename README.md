@@ -57,6 +57,60 @@ A lightweight, fast, and efficient URL shortening service built with **Go** and 
 - **CORS Middleware:** Custom implementation
 
 ---
+## 🏗️ Architecture Overview
+
+This URL Shortening Service is designed with a modular and scalable architecture to handle URL creation, storage, and redirection efficiently. Below is a breakdown of the key components and their interactions:
+
+### 📦 Components
+
+- **Web Browser**
+  - Acts as the client interface for sending requests and receiving responses.
+
+- **CORS Middleware**
+  - Ensures secure cross-origin communication between the browser and the backend service.
+
+- **URL Shortening Service**
+  - Core backend system that handles URL shortening and redirection.
+
+#### 🔧 Endpoints
+
+- **Shorten Endpoint (`POST /shorten`)**
+  - Accepts original URL and metadata from the browser.
+  - Triggers short code generation and database insertion.
+
+- **Redirect Endpoint (`GET /{shortcode}`)**
+  - Receives short code from the browser.
+  - Fetches original URL and expiry from the database.
+  - Redirects the browser to the original URL.
+
+- **Text Endpoint**
+  - Interfaces with the database for read/write operations.
+
+#### 🧠 Internal Modules
+
+- **Short Code Generator**
+  - Generates unique short codes for incoming URLs.
+
+- **URL Database**
+  - Stores mappings of short codes to original URLs and associated metadata (e.g., expiry).
+
+### 🔄 Process Flow
+
+1. **Shortening a URL**
+   - Browser sends a `POST` request to the Shorten Endpoint.
+   - Short Code Generator creates a unique code.
+   - URL and metadata are saved in the database.
+
+2. **Redirecting a URL**
+   - Browser sends a `GET` request with the short code.
+   - Redirect Endpoint retrieves the original URL and expiry.
+   - Browser is redirected to the original URL.
+
+---
+
+This architecture ensures separation of concerns, scalability, and maintainability while providing a seamless experience for users.
+
+---
 
 ## 📦 Installation
 
